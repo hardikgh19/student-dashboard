@@ -51,15 +51,54 @@ function deleteStudent(id) {
 // Edit student
 function editStudent(id) {
   const student = students.find(s => s.id === id);
-  const newName = prompt('Enter new name', student.name);
-  const newScore = prompt('Enter new score', student.score);
-
-  if (newName && newScore !== null && newScore !== '') {
-    student.name = newName;
-    student.score = parseInt(newScore);
-    saveToLocal();   
-    renderTable();
+  
+  // Get and validate name input
+  let newName = prompt('Enter new name', student.name);
+  
+  if (newName === null) return; // User cancelled
+  
+  // Trim whitespace
+  newName = newName.trim();
+  
+  // Validate name: should not be empty, should not be purely numeric
+  if (newName === '') {
+    alert('Name cannot be empty!');
+    return;
   }
+  
+  if (/^\d+$/.test(newName)) {
+    alert('Name cannot be purely numeric! Please enter a valid text name.');
+    return;
+  }
+  
+  // Get and validate score input
+  const newScoreInput = prompt('Enter new score', student.score);
+  
+  if (newScoreInput === null) return; // User cancelled
+  
+  // Validate score: should be a valid number
+  const newScore = parseInt(newScoreInput);
+  
+  if (isNaN(newScore)) {
+    alert('Score must be a valid number!');
+    return;
+  }
+  
+  if (newScore < 0) {
+    alert('Score cannot be negative!');
+    return;
+  }
+  
+  if (newScore > 100) {
+    alert('Score cannot be greater than 100!');
+    return;
+  }
+  
+  // Update student if all validations pass
+  student.name = newName;
+  student.score = newScore;
+  saveToLocal();   
+  renderTable();
 }
 
 // Render table on page load
